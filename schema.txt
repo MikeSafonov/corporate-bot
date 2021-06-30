@@ -1,0 +1,55 @@
+# Для сайта https://app.quickdatabasediagrams.com/#/
+
+employee
+-
+id PK int AUTOINCREMENT
+user_id varchar(15) UNIQUE
+fio varchar(200)
+phone varchar(13)
+email varchar(254)
+
+message
+-
+id PK int AUTOINCREMENT
+employee_id int FK >- employee.id
+message_text text
+date_of_message timestamp
+type_id int FK >- type_of_message.id
+
+type_of_message
+-
+id PK int AUTOINCREMENT
+type_message varchar(30)
+
+authorization_code
+-
+id PK int AUTOINCREMENT
+code varchar(6) UNIQUE
+employee_id int FK >- employee.id
+user_id varchar(15)
+date_of_generation timestamp
+
+mailing
+-
+id int PK AUTOINCREMENT 
+user_id varchar(15)
+mail_text text
+date_of_mailing timestamp
+
+actions
+-
+id int PK AUTOINCREMENT
+employee_id int FK >- employee.id
+type_id int FK >- types_of_actions.id
+date_of_action timestamp
+
+types_of_actions
+-
+id int PK AUTOINCREMENT
+type_action varchar(30)
+
+
+usefulness
+----
+answer_yes int
+answer_no int
