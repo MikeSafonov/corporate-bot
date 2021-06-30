@@ -21,9 +21,10 @@ wrapper {
 test{
     useJUnitPlatform()
     finalizedBy(jacocoTestReport)
+    systemProperty "file.encoding", "utf-8"
 }
 
-
+compileJava.options.encoding = 'UTF-8'
 
 dependencies {
     implementation("org.telegram:telegrambots:5.2.0")
@@ -31,6 +32,7 @@ dependencies {
     implementation group: 'org.flywaydb', name: 'flyway-core', version: '7.10.0'
     testImplementation(platform('org.junit:junit-bom:5.7.2'))
     testImplementation('org.junit.jupiter:junit-jupiter')
+    compile "org.slf4j:slf4j-simple:1.6.1"
 }
 
 
