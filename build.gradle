@@ -33,6 +33,7 @@ dependencies {
     testImplementation(platform('org.junit:junit-bom:5.7.2'))
     testImplementation('org.junit.jupiter:junit-jupiter')
     compile "org.slf4j:slf4j-simple:1.6.1"
+    implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.5.3.Final'
 }
 
 
