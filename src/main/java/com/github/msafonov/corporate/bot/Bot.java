@@ -10,23 +10,22 @@ import java.nio.charset.StandardCharsets;
 
 
 public class Bot extends TelegramLongPollingBot {
-    Information information ;
-Bot(Information information){
-    this.information=information;
-}
+    private BotProperties botProperties;
+
+    Bot(BotProperties botProperties) {
+        this.botProperties = botProperties;
+    }
+
     @Override
     public void onUpdateReceived(Update update) {
-        // TODO
+
         if (update.hasMessage() && update.getMessage().hasText()) {
-            SendMessage message = new SendMessage(); // Create a SendMessage object with mandatory fields
+            SendMessage message = new SendMessage();
             message.setChatId(update.getMessage().getChatId().toString());
-            System.out.println(update.getMessage().getText());
+            message.setText("Добрый день, ваш запрос принят на обработку, ожидайте");
 
-            message.setText(utf8("Добрый день, ваш запрос принят на обработку, ожидайте"));
-
-//update.getMessage().getText()
             try {
-                execute(message); // Call method to send the message
+                execute(message);
             } catch (TelegramApiException e) {
                 e.printStackTrace();
             }
@@ -35,19 +34,15 @@ Bot(Information information){
 
     @Override
     public String getBotUsername() {
-        // TODO
-        return information.getBotName();
+
+        return botProperties.getBotName();
     }
 
     @Override
     public String getBotToken() {
-        // TODO
-        return information.getToken();
+
+        return botProperties.getToken();
     }
 
-    public String utf8(String str) {
-        byte[] byteArray = str.getBytes();
-        Charset utf8 = StandardCharsets.UTF_8;
-        return new String(byteArray, utf8);
-    }
+
 }

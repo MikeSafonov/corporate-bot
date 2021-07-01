@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 
-public class Information {
+public class PropertiesReader {
 
 
     private Properties properties;
@@ -16,7 +16,7 @@ public class Information {
     private String botName;
 
 
-    Information() {
+    PropertiesReader() {
         String path="src/main/resources/config.properties";
         File file = new File(path);
 
@@ -24,24 +24,18 @@ public class Information {
         properties = new Properties();
 
         try {
-            properties.load(new FileReader(file));
+            FileReader fileReader= new FileReader(file);
+            properties.load(fileReader);
+            fileReader.close();
         } catch (IOException e) {
-            System.err.println("Файл config.properties не найден или испорчен");
+            System.err.println("File config.properties was not found or spoiled");
         }
+
         token = properties.getProperty("token");
         botName = properties.getProperty("botName");
     }
 
-    public Properties getProperties() {
-        return properties;
+    public BotProperties setBotProperties(){
+        return new BotProperties(token, botName);
     }
-
-    public String getToken() {
-        return token;
-    }
-
-    public String getBotName() {
-        return botName;
-    }
-
 }
