@@ -28,7 +28,7 @@ test{
 dependencies {
     implementation("org.telegram:telegrambots:5.2.0")
     implementation group: 'org.postgresql', name: 'postgresql', version: '42.2.22'
-    implementation group: 'org.flywaydb', name: 'flyway-core', version: '7.10.0'
+    implementation group: 'org.flywaydb', name: 'flyway-core', version: '7.11.0'
     testImplementation(platform('org.junit:junit-bom:5.7.2'))
     testImplementation('org.junit.jupiter:junit-jupiter')
 }
