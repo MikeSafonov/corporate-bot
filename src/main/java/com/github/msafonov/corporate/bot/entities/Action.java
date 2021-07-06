@@ -1,7 +1,5 @@
 package com.github.msafonov.corporate.bot.entities;
 
-import org.hibernate.annotations.Type;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -16,7 +14,6 @@ public class Action extends BaseEntity {
     @JoinColumn(name = "employee_id")
     private Employee employee;
     @Column(name = "date_of_action")
-    @Type(type = "timestamp")
     private LocalDateTime dateOfAction;
     @ManyToOne()
     @JoinColumn(name = "type_id")

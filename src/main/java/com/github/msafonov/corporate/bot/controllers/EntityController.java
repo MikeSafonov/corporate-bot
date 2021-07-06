@@ -2,6 +2,7 @@ package com.github.msafonov.corporate.bot.controllers;
 
 import com.github.msafonov.corporate.bot.entities.AuthorizationCode;
 import com.github.msafonov.corporate.bot.entities.BaseEntity;
+import org.glassfish.grizzly.compression.lzma.impl.Base;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
@@ -25,7 +26,7 @@ public class EntityController {
             entityManager.flush();
             entityManager.getTransaction().commit();
         } catch (Exception e) {
-            //если ошибка, то отменяем транзакцию
+            e.printStackTrace();
             entityManager.getTransaction().rollback();
         }
     }
@@ -47,6 +48,7 @@ public class EntityController {
             entityManager.flush();
             entityManager.getTransaction().commit();
         } catch (Exception ex) {
+            ex.printStackTrace();
             entityManager.getTransaction().rollback();
         }
     }
@@ -58,6 +60,7 @@ public class EntityController {
             entityManager.flush();
             entityManager.getTransaction().commit();
         } catch (Exception ex) {
+            ex.printStackTrace();
             entityManager.getTransaction().rollback();
         }
     }
@@ -71,6 +74,7 @@ public class EntityController {
                 entityManager.detach(o);
             entityManager.getTransaction().commit();
         } catch (Exception ex) {
+            ex.printStackTrace();
             entityManager.getTransaction().rollback();
         }
         return resultList;
@@ -78,11 +82,11 @@ public class EntityController {
 
     public <T extends BaseEntity> T querySingle(CriteriaQuery<T> criteria) {
         var res = query(criteria);
-        return res.size() == 0 ? null : res.get(0);
+        return res == null || res.size() == 0 ? null : res.get(0);
     }
 
     public <T extends BaseEntity> CriteriaQuery<T> getWhereEqual(Class<T> entityClass, Map<String, Object> equals) {
-        if (equals.size() == 0)
+        if (equals == null || equals.size() == 0)
             return null;
         CriteriaBuilder cb = getCriteriaBuilder();
 

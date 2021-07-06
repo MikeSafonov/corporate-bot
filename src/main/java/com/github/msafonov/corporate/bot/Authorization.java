@@ -4,12 +4,6 @@ import com.github.msafonov.corporate.bot.controllers.EntityController;
 import com.github.msafonov.corporate.bot.entities.AuthorizationCode;
 import com.github.msafonov.corporate.bot.entities.Employee;
 
-import java.io.*;
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class Authorization {
     private final EntityController entityController;
 
@@ -34,6 +28,6 @@ public class Authorization {
     }
 
     public boolean isFreeCode(AuthorizationCode authorizationCode) {
-        return authorizationCode != null && authorizationCode.getUserId().equals("0");
+        return authorizationCode != null && authorizationCode.getUserId() == null;
     }
 }
