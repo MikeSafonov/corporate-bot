@@ -19,11 +19,11 @@ public class Employee extends BaseEntity {
     @Column(name = "email", length = 254)
     private String email;
     @OneToMany(mappedBy = "employee")
-    private Set<Message> messages;
+    private List<Message> messages;
     @OneToMany(mappedBy = "employee")
-    private Set<Action> actions;
+    private List<Action> actions;
     @OneToMany(mappedBy = "employee")
-    private Set<AuthorizationCode> authorizationCodes;
+    private List<AuthorizationCode> authorizationCodes;
 
     public Employee() {
     }
@@ -68,27 +68,27 @@ public class Employee extends BaseEntity {
         this.email = email;
     }
 
-    public Set<Message> getMessages() {
+    public List<Message> getMessages() {
         return messages;
     }
 
-    public void setMessages(Set<Message> messages) {
+    public void setMessages(List<Message> messages) {
         this.messages = messages;
     }
 
-    public Set<Action> getActions() {
+    public List<Action> getActions() {
         return actions;
     }
 
-    public void setActions(Set<Action> actions) {
+    public void setActions(List<Action> actions) {
         this.actions = actions;
     }
 
-    public Set<AuthorizationCode> getAuthorizationCodes() {
+    public List<AuthorizationCode> getAuthorizationCodes() {
         return authorizationCodes;
     }
 
-    public void setAuthorizationCodes(Set<AuthorizationCode> authorizationCodes) {
+    public void setAuthorizationCodes(List<AuthorizationCode> authorizationCodes) {
         this.authorizationCodes = authorizationCodes;
     }
 
