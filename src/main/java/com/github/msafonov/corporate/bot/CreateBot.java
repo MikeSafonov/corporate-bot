@@ -4,10 +4,8 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 public class CreateBot {
-    CreateBot(){
+    CreateBot(BotProperties botProperties) {
         try {
-            PropertiesReader propertiesReader = new PropertiesReader();
-            BotProperties botProperties = propertiesReader.getBotProperties();
             if (botProperties.getBotName() == null || botProperties.getToken() == null) {
                 throw new Exception("botName or botToken not found");
             }

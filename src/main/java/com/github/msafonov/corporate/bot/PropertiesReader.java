@@ -8,8 +8,6 @@ import java.util.Properties;
 
 
 public class PropertiesReader {
-
-
     private Properties properties;
     private String token;
     private String botName;

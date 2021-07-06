@@ -11,8 +11,7 @@ public class FileStorage {
     }
 
     public File getFile(TemplateTypes type) throws IOException {
-        PropertiesReader propertiesReader = new PropertiesReader();
-        StorageProperties storageProperties = propertiesReader.getStorageProperties();
+
         switch (type) {
             case DISCHARGE:
                 return new File(storageProperties.getDischarge());
