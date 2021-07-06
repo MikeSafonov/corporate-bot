@@ -1,21 +1,32 @@
 package com.github.msafonov.corporate.bot;
 
+import com.github.msafonov.corporate.bot.Property.BotProperties;
 import com.github.msafonov.corporate.bot.controllers.EntityController;
 import com.github.msafonov.corporate.bot.entities.Action;
 import com.github.msafonov.corporate.bot.entities.AuthorizationCode;
 import com.github.msafonov.corporate.bot.entities.Employee;
 import com.github.msafonov.corporate.bot.entities.TypeOfAction;
+import com.github.msafonov.corporate.bot.controllers.EntityController;
+import com.github.msafonov.corporate.bot.entities.AuthorizationCode;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Bot extends TelegramLongPollingBot {
     private BotProperties botProperties;
+    private EntityManager entityManager;
+    private boolean isAdmin=true;
+  
     private EntityController entityController;
     private Authorization authorization;
     private EmployeeLoader employeeLoader;
@@ -33,6 +44,14 @@ public class Bot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
 
         if (update.hasMessage() && update.getMessage().hasText()) {
+            SendMessage message = new SendMessage();
+            message.setChatId(update.getMessage().getChatId().toString());
+            message.setText("Добрый день, ваш запрос принят на обработку, ожидайте");
+            message.getChatId();
+            if (isAdmin){
+                Keyboard(message);
+                message.setText(command(update.getMessage().getText()));
+            }
             var chat_id = update.getMessage().getChatId().toString();
             String receiveMessage = update.getMessage().getText();
 
@@ -140,6 +159,43 @@ public class Bot extends TelegramLongPollingBot {
             return false;
         }
         return true;
+    }
+    public void Keyboard(SendMessage message) {
+
+
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        message.setReplyMarkup(replyKeyboardMarkup);
+
+        List<KeyboardRow> keyoard = new ArrayList<>();
+        KeyboardRow firstRow = new KeyboardRow();
+        KeyboardRow secondRow = new KeyboardRow();
+        replyKeyboardMarkup.setSelective(true);
+        replyKeyboardMarkup.setResizeKeyboard(true);
+        replyKeyboardMarkup.setOneTimeKeyboard(false);
+        firstRow.add("Новый сотрудник");
+        keyoard.add(firstRow);
+        replyKeyboardMarkup.setKeyboard(keyoard);
+
+
+    }
+
+    private String command(String text){
+        switch (text){
+            case "Новый сотрудник":
+                EntityController entityController=new EntityController(entityManager);
+                AuthorizationCode authorizationCode=new AuthorizationCode();
+                UniqueCode uniqueCode= new UniqueCode();
+                String code= uniqueCode.generateCodeNumber(new ArrayList<>());
+                authorizationCode.setCode(code);
+                entityController.save(authorizationCode);
+
+                return code;
+            case "k":
+                return "";
+            default:
+                return "Нет такой команды";
+        }
+
     }
 
     @Override
