@@ -1,7 +1,9 @@
 package com.github.msafonov.corporate.bot.entities;
 
+import com.github.msafonov.corporate.bot.TypeAction;
+
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "types_of_actions")
@@ -11,9 +13,8 @@ public class TypeOfAction extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Column(name = "type_action", length = 30)
-    private String typeAction;
-    @OneToMany(mappedBy = "typeOfAction")
-    private Set<Action> actions;
+    @Enumerated(value = EnumType.STRING)
+    private TypeAction typeAction;
 
     public TypeOfAction() {
     }
@@ -26,19 +27,11 @@ public class TypeOfAction extends BaseEntity {
         this.id = id;
     }
 
-    public String getTypeAction() {
+    public TypeAction getTypeAction() {
         return typeAction;
     }
 
-    public void setTypeAction(String typeAction) {
+    public void setTypeAction(TypeAction typeAction) {
         this.typeAction = typeAction;
-    }
-
-    public Set<Action> getActions() {
-        return actions;
-    }
-
-    public void setActions(Set<Action> actions) {
-        this.actions = actions;
     }
 }

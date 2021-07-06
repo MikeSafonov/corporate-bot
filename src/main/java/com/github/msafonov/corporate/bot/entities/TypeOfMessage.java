@@ -1,7 +1,7 @@
 package com.github.msafonov.corporate.bot.entities;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "type_of_message")
@@ -13,7 +13,7 @@ public class TypeOfMessage extends BaseEntity {
     @Column(name = "type_message", length = 30)
     private String typeMessage;
     @OneToMany(mappedBy = "typeOfMessage")
-    private Set<Message> messages;
+    private List<Message> messages;
 
     public TypeOfMessage() {
     }
@@ -34,11 +34,11 @@ public class TypeOfMessage extends BaseEntity {
         this.typeMessage = typeMessage;
     }
 
-    public Set<Message> getMessages() {
+    public List<Message> getMessages() {
         return messages;
     }
 
-    public void setMessages(Set<Message> messages) {
+    public void setMessages(List<Message> messages) {
         this.messages = messages;
     }
 }
