@@ -1,8 +1,8 @@
-package com.github.msafonov.corporate.bot;
+package com.github.msafonov.corporate.bot.Properties;
 
 public class BotProperties {
-private String token;
-private String botName;
+    private String token;
+    private String botName;
 
 
     public BotProperties(String token, String botName) {

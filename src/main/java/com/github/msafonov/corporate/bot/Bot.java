@@ -20,20 +20,25 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class Bot extends TelegramLongPollingBot {
     private BotProperties botProperties;
+    private AdminsProperties adminsProperties;
     private EntityManager entityManager;
     private boolean isAdmin=true;
-  
+
     private EntityController entityController;
     private Authorization authorization;
     private EmployeeLoader employeeLoader;
     private AuthorizationCodeLoader authorizationCodeLoader;
 
     public Bot(BotProperties botProperties, EntityController entityController) {
+    Bot(BotProperties botProperties, AdminsProperties adminsProperties) {
         this.botProperties = botProperties;
+        this.adminsProperties=adminsProperties;
         this.entityController = entityController;
         authorization = new Authorization(entityController);
         employeeLoader = new EmployeeLoader(entityController);
@@ -47,11 +52,11 @@ public class Bot extends TelegramLongPollingBot {
             SendMessage message = new SendMessage();
             message.setChatId(update.getMessage().getChatId().toString());
             message.setText("Добрый день, ваш запрос принят на обработку, ожидайте");
-            message.getChatId();
-            if (isAdmin){
+            if (adminsProperties.getChatId().contains(message.getChatId())){
                 Keyboard(message);
                 message.setText(command(update.getMessage().getText()));
             }
+            else System.out.println("aaaaa");
             var chat_id = update.getMessage().getChatId().toString();
             String receiveMessage = update.getMessage().getText();
 
