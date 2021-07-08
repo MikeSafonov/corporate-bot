@@ -1,4 +1,4 @@
-package com.github.msafonov.corporate.bot;
+package com.github.msafonov.corporate.bot.Property;
 
 public class StorageProperties {
     private String vacationNo;

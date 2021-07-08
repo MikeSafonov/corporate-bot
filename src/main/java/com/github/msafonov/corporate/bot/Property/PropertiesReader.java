@@ -1,4 +1,4 @@
-package com.github.msafonov.corporate.bot.Properties;
+package com.github.msafonov.corporate.bot.Property;
 
 
 import java.io.File;
@@ -13,6 +13,10 @@ public class PropertiesReader {
     private final String token;
     private final String botName;
     private final String chatId;
+    private String vacationNo;
+    private String vacationWith;
+    private String discharge;
+    private String dischargeList;
 
     public PropertiesReader() throws IOException {
         String path = "src/main/resources/config.properties";
@@ -25,6 +29,10 @@ public class PropertiesReader {
         }
         token = properties.getProperty("token");
         botName = properties.getProperty("botName");
+        vacationNo = properties.getProperty("vacationNo");
+        vacationWith = properties.getProperty("vacationWith");
+        discharge = properties.getProperty("discharge");
+        dischargeList = properties.getProperty("dischargeList");
         path = "src/main/resources/admins.properties";
         file = new File(path);
         try (var reader = new FileReader(file)) {
@@ -38,4 +46,7 @@ public class PropertiesReader {
         return new BotProperties(token, botName);
     }
     public AdminsProperties getAdminsProperties(){return new AdminsProperties(chatId);}
+    public StorageProperties getStorageProperties() {
+        return new StorageProperties(vacationNo, vacationWith, discharge, dischargeList);
+    }
 }

@@ -1,5 +1,6 @@
 package com.github.msafonov.corporate.bot;
 
+
 import com.github.msafonov.corporate.bot.Property.AdminsProperties;
 import com.github.msafonov.corporate.bot.Property.BotProperties;
 import com.github.msafonov.corporate.bot.Property.StorageProperties;
@@ -19,9 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+
 public class Bot extends TelegramLongPollingBot {
     private BotProperties botProperties;
     private AdminsProperties adminsProperties;
+
     private StorageProperties storageProperties;
     private EntityManager entityManager;
     private boolean isAdmin=true;
@@ -169,7 +172,8 @@ public class Bot extends TelegramLongPollingBot {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         message.setReplyMarkup(replyKeyboardMarkup);
 
-        List<KeyboardRow> keyboerd = new ArrayList<>();
+
+        List<KeyboardRow> keyboard = new ArrayList<>();
         KeyboardRow firstRow = new KeyboardRow();
         KeyboardRow secondRow = new KeyboardRow();
         replyKeyboardMarkup.setSelective(true);
@@ -178,9 +182,9 @@ public class Bot extends TelegramLongPollingBot {
         firstRow.add("Статистика");
         firstRow.add("Рассылка");
         secondRow.add("Новый сотрудник");
-        keyboerd.add(firstRow);
-        keyboerd.add(secondRow);
-        replyKeyboardMarkup.setKeyboard(keyboerd);
+        keyboard.add(firstRow);
+        keyboard.add(secondRow);
+        replyKeyboardMarkup.setKeyboard(keyboard);
 
 
     }
@@ -198,8 +202,10 @@ public class Bot extends TelegramLongPollingBot {
                 entityController.save(authorizationCode);
 
                 return code;
+
             case "Рассылка":
                 return "1";
+
             default:
                 return "Нет такой команды";
         }

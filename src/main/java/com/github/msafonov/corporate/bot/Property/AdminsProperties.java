@@ -1,4 +1,4 @@
-package com.github.msafonov.corporate.bot.Properties;
+package com.github.msafonov.corporate.bot.Property;
 
 import java.util.Arrays;
 import java.util.List;
