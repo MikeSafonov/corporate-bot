@@ -1,11 +1,8 @@
 package com.github.msafonov.corporate.bot;
 
+import com.github.msafonov.corporate.bot.Property.AdminsProperties;
 import com.github.msafonov.corporate.bot.Property.BotProperties;
-import com.github.msafonov.corporate.bot.controllers.EntityController;
-import com.github.msafonov.corporate.bot.entities.Action;
-import com.github.msafonov.corporate.bot.entities.AuthorizationCode;
-import com.github.msafonov.corporate.bot.entities.Employee;
-import com.github.msafonov.corporate.bot.entities.TypeOfAction;
+import com.github.msafonov.corporate.bot.Property.StorageProperties;
 import com.github.msafonov.corporate.bot.controllers.EntityController;
 import com.github.msafonov.corporate.bot.entities.AuthorizationCode;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -20,13 +17,12 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 public class Bot extends TelegramLongPollingBot {
     private BotProperties botProperties;
     private AdminsProperties adminsProperties;
+    private StorageProperties storageProperties;
     private EntityManager entityManager;
     private boolean isAdmin=true;
 
@@ -37,8 +33,10 @@ public class Bot extends TelegramLongPollingBot {
 
     public Bot(BotProperties botProperties, EntityController entityController) {
     Bot(BotProperties botProperties, AdminsProperties adminsProperties) {
+    Bot(BotProperties botProperties, AdminsProperties adminsProperties,StorageProperties storageProperties) {
         this.botProperties = botProperties;
         this.adminsProperties=adminsProperties;
+        this.storageProperties=storageProperties;
         this.entityController = entityController;
         authorization = new Authorization(entityController);
         employeeLoader = new EmployeeLoader(entityController);
@@ -171,32 +169,37 @@ public class Bot extends TelegramLongPollingBot {
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         message.setReplyMarkup(replyKeyboardMarkup);
 
-        List<KeyboardRow> keyoard = new ArrayList<>();
+        List<KeyboardRow> keyboerd = new ArrayList<>();
         KeyboardRow firstRow = new KeyboardRow();
         KeyboardRow secondRow = new KeyboardRow();
         replyKeyboardMarkup.setSelective(true);
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setOneTimeKeyboard(false);
-        firstRow.add("Новый сотрудник");
-        keyoard.add(firstRow);
-        replyKeyboardMarkup.setKeyboard(keyoard);
+        firstRow.add("Статистика");
+        firstRow.add("Рассылка");
+        secondRow.add("Новый сотрудник");
+        keyboerd.add(firstRow);
+        keyboerd.add(secondRow);
+        replyKeyboardMarkup.setKeyboard(keyboerd);
 
 
     }
 
     private String command(String text){
         switch (text){
+            case "Статистика":
+                return "";
             case "Новый сотрудник":
                 EntityController entityController=new EntityController(entityManager);
                 AuthorizationCode authorizationCode=new AuthorizationCode();
                 UniqueCode uniqueCode= new UniqueCode();
-                String code= uniqueCode.generateCodeNumber(new ArrayList<>());
+                String code= uniqueCode.generateCodeNumber(entityManager);
                 authorizationCode.setCode(code);
                 entityController.save(authorizationCode);
 
                 return code;
-            case "k":
-                return "";
+            case "Рассылка":
+                return "1";
             default:
                 return "Нет такой команды";
         }

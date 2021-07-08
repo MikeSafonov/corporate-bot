@@ -1,18 +1,21 @@
 package com.github.msafonov.corporate.bot;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Random;
 
 public class UniqueCode {
+Queries queries;
 
 
-    public String generateCodeNumber(List<String> existingCode) {
+    public String generateCodeNumber(EntityManager entityManager) {
+        queries=new Queries(entityManager);
         String newCode;
         Random random = new Random();
         do {
             int numb = random.nextInt(899999) + 100000;
             newCode = String.valueOf(numb);
-        } while (existingCode.contains(newCode));
+        } while (!queries.uniqueCodeQuery(newCode).isEmpty());
 
         return newCode;
     }
