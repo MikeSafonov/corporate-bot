@@ -1,5 +1,9 @@
 package com.github.msafonov.corporate.bot;
 
+
+import com.github.msafonov.corporate.bot.Property.AdminsProperties;
+import com.github.msafonov.corporate.bot.Property.BotProperties;
+import com.github.msafonov.corporate.bot.Property.StorageProperties;
 import com.github.msafonov.corporate.bot.controllers.EntityController;
 import com.github.msafonov.corporate.bot.entities.Action;
 import com.github.msafonov.corporate.bot.entities.AuthorizationCode;
@@ -8,23 +12,35 @@ import com.github.msafonov.corporate.bot.entities.TypeOfAction;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
+
 
 
 public class Bot extends TelegramLongPollingBot {
-    private BotProperties botProperties;
-    private EntityController entityController;
-    private Authorization authorization;
-    private EmployeeLoader employeeLoader;
-    private AuthorizationCodeLoader authorizationCodeLoader;
+    private final BotProperties botProperties;
 
-    public Bot(BotProperties botProperties, EntityController entityController) {
+
+    private StorageProperties storageProperties;
+
+    private EntityController entityController;
+    private final Authorization authorization;
+    private final EmployeeLoader employeeLoader;
+    private final AuthorizationCodeLoader authorizationCodeLoader;
+
+    public Bot(BotProperties botProperties, FileStorage fileStorage,EntityController entityController,Authorization authorization) {
         this.botProperties = botProperties;
-        this.entityController = entityController;
-        authorization = new Authorization(entityController);
+        this.storageProperties=storageProperties;
+
+        this.entityController=entityController;
+        this.authorization=authorization;
         employeeLoader = new EmployeeLoader(entityController);
         authorizationCodeLoader = new AuthorizationCodeLoader(entityController);
     }
@@ -33,6 +49,14 @@ public class Bot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
 
         if (update.hasMessage() && update.getMessage().hasText()) {
+            SendMessage message = new SendMessage();
+            message.setChatId(update.getMessage().getChatId().toString());
+            message.setText("Добрый день, ваш запрос принят на обработку, ожидайте");
+//            if (adminsProperties.getChatId().contains(message.getChatId())){
+//                createAdminKeyboard(message);
+//                message.setText(command(update.getMessage().getText()));
+//            }
+//            else System.out.println("aaaaa");
             var chat_id = update.getMessage().getChatId().toString();
             String receiveMessage = update.getMessage().getText();
 
@@ -75,6 +99,8 @@ public class Bot extends TelegramLongPollingBot {
             } else if (authorization.isAdministrator(chat_id)) {
                 //действия если он админ
                 //Иначе работник новый
+                createAdminKeyboard(message);
+                message.setText(command(update.getMessage().getText()));
             } else {
                 newEmployee(update);
             }
@@ -140,6 +166,50 @@ public class Bot extends TelegramLongPollingBot {
             return false;
         }
         return true;
+    }
+    public void createAdminKeyboard(SendMessage message) {
+
+
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        message.setReplyMarkup(replyKeyboardMarkup);
+
+
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        KeyboardRow firstRow = new KeyboardRow();
+        KeyboardRow secondRow = new KeyboardRow();
+        replyKeyboardMarkup.setSelective(true);
+        replyKeyboardMarkup.setResizeKeyboard(true);
+        replyKeyboardMarkup.setOneTimeKeyboard(false);
+        firstRow.add("Статистика");
+        firstRow.add("Рассылка");
+        secondRow.add("Новый сотрудник");
+        keyboard.add(firstRow);
+        keyboard.add(secondRow);
+        replyKeyboardMarkup.setKeyboard(keyboard);
+
+
+    }
+
+    private String command(String text){
+        switch (text){
+            case "Статистика":
+                return "";
+            case "Новый сотрудник":
+                AuthorizationCode authorizationCode=new AuthorizationCode();
+                UniqueCode uniqueCode= new UniqueCode();
+                String code= uniqueCode.generateCodeNumber(entityController);
+                authorizationCode.setCode(code);
+                entityController.save(authorizationCode);
+
+                return code;
+
+            case "Рассылка":
+                return "1";
+
+            default:
+                return "Нет такой команды";
+        }
+
     }
 
     @Override

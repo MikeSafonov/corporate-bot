@@ -1,5 +1,7 @@
 package com.github.msafonov.corporate.bot;
 
+import com.github.msafonov.corporate.bot.Property.StorageProperties;
+
 import java.io.File;
 import java.io.IOException;
 
