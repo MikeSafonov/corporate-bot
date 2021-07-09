@@ -111,4 +111,10 @@ public class EntityController {
     public CriteriaBuilder getCriteriaBuilder() {
         return entityManager.getCriteriaBuilder();
     }
+    public List<String> uniqueCodeQuery(String code){
+        Query q=entityManager.createQuery("select code from authorization_code where code=:code");
+        q.setParameter("code",code);
+
+        return q.getResultList();
+    }
 }

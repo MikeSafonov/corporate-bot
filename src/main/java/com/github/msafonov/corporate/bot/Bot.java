@@ -30,17 +30,16 @@ public class Bot extends TelegramLongPollingBot {
 
     private StorageProperties storageProperties;
 
-EntityManager entityManager;
     private EntityController entityController;
     private final Authorization authorization;
     private final EmployeeLoader employeeLoader;
     private final AuthorizationCodeLoader authorizationCodeLoader;
 
-    public Bot(BotProperties botProperties, FileStorage fileStorage,EntityManager entityManager,Authorization authorization) {
+    public Bot(BotProperties botProperties, FileStorage fileStorage,EntityController entityController,Authorization authorization) {
         this.botProperties = botProperties;
         this.storageProperties=storageProperties;
-        this.entityManager=entityManager;
-        entityController=new EntityController(entityManager);
+
+        this.entityController=entityController;
         this.authorization=authorization;
         employeeLoader = new EmployeeLoader(entityController);
         authorizationCodeLoader = new AuthorizationCodeLoader(entityController);
@@ -198,7 +197,7 @@ EntityManager entityManager;
             case "Новый сотрудник":
                 AuthorizationCode authorizationCode=new AuthorizationCode();
                 UniqueCode uniqueCode= new UniqueCode();
-                String code= uniqueCode.generateCodeNumber(entityManager);
+                String code= uniqueCode.generateCodeNumber(entityController);
                 authorizationCode.setCode(code);
                 entityController.save(authorizationCode);
 

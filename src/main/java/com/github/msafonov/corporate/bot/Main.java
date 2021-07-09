@@ -40,7 +40,7 @@ public class Main {
             EntityManager em = emf.createEntityManager();
             EntityController ec = new EntityController(em);
             Authorization authorization=new Authorization(ec,adminsProperties);
-            botsApi.registerBot(new Bot(botProperties, fileStorage, em, authorization));
+            botsApi.registerBot(new Bot(botProperties, fileStorage, ec, authorization));
         } catch (Exception e) {
             e.printStackTrace();
 
