@@ -9,8 +9,9 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
 public class CreateBot {
-    CreateBot(BotProperties botProperties) {
+    CreateBot(BotProperties botProperties, FileStorage fileStorage) {
         try {
+            PropertiesReader propertiesReader = new PropertiesReader();
             if (botProperties.getBotName() == null || botProperties.getToken() == null) {
                 throw new Exception("botName or botToken not found");
             }
@@ -18,9 +19,10 @@ public class CreateBot {
             EntityManagerFactory emf = Persistence.createEntityManagerFactory("entities");
             EntityManager em = emf.createEntityManager();
             EntityController ec = new EntityController(em);
-            botsApi.registerBot(new Bot(botProperties, ec));
+            botsApi.registerBot(new Bot(botProperties, fileStorage, ec));
         } catch (Exception e) {
             e.printStackTrace();
+
         }
     }
 }
