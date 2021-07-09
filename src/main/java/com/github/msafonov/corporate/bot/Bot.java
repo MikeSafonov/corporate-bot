@@ -5,7 +5,10 @@ import com.github.msafonov.corporate.bot.Property.AdminsProperties;
 import com.github.msafonov.corporate.bot.Property.BotProperties;
 import com.github.msafonov.corporate.bot.Property.StorageProperties;
 import com.github.msafonov.corporate.bot.controllers.EntityController;
+import com.github.msafonov.corporate.bot.entities.Action;
 import com.github.msafonov.corporate.bot.entities.AuthorizationCode;
+import com.github.msafonov.corporate.bot.entities.Employee;
+import com.github.msafonov.corporate.bot.entities.TypeOfAction;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -22,26 +25,23 @@ import java.util.List;
 
 
 public class Bot extends TelegramLongPollingBot {
-    private BotProperties botProperties;
-    private AdminsProperties adminsProperties;
+    private final BotProperties botProperties;
+
 
     private StorageProperties storageProperties;
-    private EntityManager entityManager;
-    private boolean isAdmin=true;
 
+EntityManager entityManager;
     private EntityController entityController;
-    private Authorization authorization;
-    private EmployeeLoader employeeLoader;
-    private AuthorizationCodeLoader authorizationCodeLoader;
+    private final Authorization authorization;
+    private final EmployeeLoader employeeLoader;
+    private final AuthorizationCodeLoader authorizationCodeLoader;
 
-    public Bot(BotProperties botProperties, EntityController entityController) {
-    Bot(BotProperties botProperties, AdminsProperties adminsProperties) {
-    Bot(BotProperties botProperties, AdminsProperties adminsProperties,StorageProperties storageProperties) {
+    public Bot(BotProperties botProperties, FileStorage fileStorage,EntityManager entityManager,Authorization authorization) {
         this.botProperties = botProperties;
-        this.adminsProperties=adminsProperties;
         this.storageProperties=storageProperties;
-        this.entityController = entityController;
-        authorization = new Authorization(entityController);
+        this.entityManager=entityManager;
+        entityController=new EntityController(entityManager);
+        this.authorization=authorization;
         employeeLoader = new EmployeeLoader(entityController);
         authorizationCodeLoader = new AuthorizationCodeLoader(entityController);
     }
@@ -53,11 +53,11 @@ public class Bot extends TelegramLongPollingBot {
             SendMessage message = new SendMessage();
             message.setChatId(update.getMessage().getChatId().toString());
             message.setText("Добрый день, ваш запрос принят на обработку, ожидайте");
-            if (adminsProperties.getChatId().contains(message.getChatId())){
-                Keyboard(message);
-                message.setText(command(update.getMessage().getText()));
-            }
-            else System.out.println("aaaaa");
+//            if (adminsProperties.getChatId().contains(message.getChatId())){
+//                createAdminKeyboard(message);
+//                message.setText(command(update.getMessage().getText()));
+//            }
+//            else System.out.println("aaaaa");
             var chat_id = update.getMessage().getChatId().toString();
             String receiveMessage = update.getMessage().getText();
 
@@ -100,6 +100,8 @@ public class Bot extends TelegramLongPollingBot {
             } else if (authorization.isAdministrator(chat_id)) {
                 //действия если он админ
                 //Иначе работник новый
+                createAdminKeyboard(message);
+                message.setText(command(update.getMessage().getText()));
             } else {
                 newEmployee(update);
             }
@@ -166,7 +168,7 @@ public class Bot extends TelegramLongPollingBot {
         }
         return true;
     }
-    public void Keyboard(SendMessage message) {
+    public void createAdminKeyboard(SendMessage message) {
 
 
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
@@ -194,7 +196,6 @@ public class Bot extends TelegramLongPollingBot {
             case "Статистика":
                 return "";
             case "Новый сотрудник":
-                EntityController entityController=new EntityController(entityManager);
                 AuthorizationCode authorizationCode=new AuthorizationCode();
                 UniqueCode uniqueCode= new UniqueCode();
                 String code= uniqueCode.generateCodeNumber(entityManager);
