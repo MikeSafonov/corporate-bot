@@ -1,146 +1,70 @@
 package com.github.msafonov.corporate.bot;
 
 import com.github.msafonov.corporate.bot.controllers.EntityController;
-import com.github.msafonov.corporate.bot.entities.Action;
-import com.github.msafonov.corporate.bot.entities.AuthorizationCode;
-import com.github.msafonov.corporate.bot.entities.Employee;
-import com.github.msafonov.corporate.bot.entities.TypeOfAction;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.io.File;
+import java.io.IOException;
 
 
 public class Bot extends TelegramLongPollingBot {
-    private BotProperties botProperties;
-    private EntityController entityController;
-    private Authorization authorization;
-    private EmployeeLoader employeeLoader;
-    private AuthorizationCodeLoader authorizationCodeLoader;
 
-    public Bot(BotProperties botProperties, EntityController entityController) {
+    private final BotProperties botProperties;
+    private Keyboard keyboard = new Keyboard();
+    private final BotCommands botCommands;
+    private final EntityController entityController;
+
+    public Bot(BotProperties botProperties, FileStorage fileStorage, EntityController entityController, Authorization authorization) {
         this.botProperties = botProperties;
         this.entityController = entityController;
-        authorization = new Authorization(entityController);
-        employeeLoader = new EmployeeLoader(entityController);
-        authorizationCodeLoader = new AuthorizationCodeLoader(entityController);
+
+        this.botCommands = new BotCommands(fileStorage, this.keyboard, this.entityController, authorization);
+
     }
 
     @Override
     public void onUpdateReceived(Update update) {
 
         if (update.hasMessage() && update.getMessage().hasText()) {
-            var chat_id = update.getMessage().getChatId().toString();
-            String receiveMessage = update.getMessage().getText();
+            Message messageFromUpdate = update.getMessage();
+            SendMessage message = new SendMessage();
+            message.setChatId(messageFromUpdate.getChatId().toString());
+            message.setText("Добрый день, ваш запрос принят на обработку, ожидайте");
+            message.setReplyMarkup(keyboard.getReplyKeyboardMarkup());
 
-            //Загружаем работника по chat_id
-            Employee employee;
-            employee = employeeLoader.getEmployee(chat_id);
-
-            //Если работник уже использовал код доступа
-            if (authorization.isRegistered(employee)) {
-                switch (employeeLoader.getLastAction(employee).getTypeOfAction().getTypeAction()) {
-                    case INIT:
-                        break;
-                    case INPUT_CODE:
-                        employee.setFio(receiveMessage);
-                        entityController.update(employee);
-                        addAction(employee, TypeAction.INPUT_NAME);
-                        SendMessage(update, "Введите номер телефона:");
-                        break;
-                    case INPUT_NAME:
-                        employee.setPhone(receiveMessage);
-                        entityController.update(employee);
-                        addAction(employee, TypeAction.INPUT_PHONE);
-                        SendMessage(update, "Введите ваш email:");
-                        break;
-                    case INPUT_PHONE:
-                        employee.setEmail(receiveMessage);
-                        entityController.update(employee);
-                        addAction(employee, TypeAction.INPUT_EMAIL);
-                        SendMessage(update, "Регистрация окончена." +
-                                "\nВаше ФИО: " + employee.getFio() +
-                                "\nНомер телефона: " + employee.getPhone() +
-                                "\nEmail: " + employee.getEmail());
-                        break;
-                    case INPUT_EMAIL:
-                        break;
-                    default:
-                        break;
+            try {
+                ReplyValues replyValues = botCommands.processCommand(messageFromUpdate.getText(), entityController, message.getChatId());
+                message.setText(replyValues.getMessage());
+                if (replyValues.getFile() != null) {
+                    sendFile(message.getChatId(), replyValues.getFile());
                 }
-                //Иначе если он админ
-            } else if (authorization.isAdministrator(chat_id)) {
-                //действия если он админ
-                //Иначе работник новый
-            } else {
-                newEmployee(update);
+            } catch (IOException | TelegramApiException e) {
+                e.printStackTrace();
             }
-        }
-    }
 
-    public void newEmployee(Update update) {
-        String regex = "[0-9]+";
-        String receiveMessage = update.getMessage().getText();
-
-        AuthorizationCode authorizationCode;
-        //Если пользователь отправил только цифры, то предполагаем что это код доступа
-        if (receiveMessage.matches(regex)) {
-            //Загружаем код
-            authorizationCode = authorizationCodeLoader.getAuthorizationCode(receiveMessage);
-            if (authorization.isFreeCode(authorizationCode)) {
-                var chat_id = update.getMessage().getChatId().toString();
-
-                //Создаем сотрудника
-                Employee employee = new Employee();
-                employee.setUserId(chat_id);
-
-                //Регистрируем chat_id сотрудника
-                authorization.register(employee, authorizationCode);
-
-                addAction(employee, TypeAction.INPUT_CODE);
-                SendMessage(update, "Код успешно активирован.");
-                SendMessage(update, "Введите ваше ФИО:");
-            } else {
-                SendMessage(update, "Введенный код недоступен.");
+            try {
+                execute(message);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
             }
-            //Иначе приветствуем его
-        } else {
-            SendMessage(update, "Здравствуйте. Введите уникальный код доступа.");
+
         }
     }
 
-    public void addAction(Employee employee, TypeAction typeAction) {
-        var equals = new HashMap<String, Object>();
-        equals.put("type_action", typeAction.name());
-        var criteriaQuery = entityController.getWhereEqual(TypeOfAction.class, equals);
-        var typeOfAction = entityController.querySingle(criteriaQuery);
-        if (typeOfAction == null)
-            return;
+    public void sendFile(String chatId, File file) throws TelegramApiException {
+        SendDocument sendDocument = new SendDocument();
+        sendDocument.setChatId(chatId);
+        sendDocument.setDocument(new InputFile(file));
 
-        //Добавляем действие для сотрудника
-        Action action = new Action();
-        action.setEmployee(employee);
-        action.setDateOfAction(LocalDateTime.now());
-        action.setTypeOfAction(typeOfAction);
-        entityController.save(action);
+        execute(sendDocument);
     }
 
-    public boolean SendMessage(Update update, String text) {
-        SendMessage sendMessage = new SendMessage();
-        var chat_id = update.getMessage().getChatId().toString();
-        sendMessage.setChatId(chat_id);
-        sendMessage.setText(text);
-        try {
-            execute(sendMessage);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
 
     @Override
     public String getBotUsername() {

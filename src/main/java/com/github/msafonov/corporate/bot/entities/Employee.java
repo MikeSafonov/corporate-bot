@@ -1,7 +1,7 @@
 package com.github.msafonov.corporate.bot.entities;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.List;
 
 @Entity
 @Table(name = "employee")
@@ -20,7 +20,7 @@ public class Employee extends BaseEntity {
     private String email;
     @OneToMany(mappedBy = "employee")
     private List<Message> messages;
-    @OneToMany(mappedBy = "employee")
+    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER)
     private List<Action> actions;
     @OneToMany(mappedBy = "employee")
     private List<AuthorizationCode> authorizationCodes;

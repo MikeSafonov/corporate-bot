@@ -3,10 +3,9 @@ package com.github.msafonov.corporate.bot.entities;
 import com.github.msafonov.corporate.bot.TypeAction;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
-@Table(name = "types_of_actions")
+@Table(name = "type_of_actions")
 public class TypeOfAction extends BaseEntity {
     @Id
     @Column(name = "id")
