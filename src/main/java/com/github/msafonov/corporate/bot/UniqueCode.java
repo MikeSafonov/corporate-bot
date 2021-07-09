@@ -1,10 +1,6 @@
 package com.github.msafonov.corporate.bot;
 
 import com.github.msafonov.corporate.bot.controllers.EntityController;
-import org.mockito.Mock;
-
-import javax.persistence.EntityManager;
-import java.util.List;
 import java.util.Random;
 
 public class UniqueCode {
