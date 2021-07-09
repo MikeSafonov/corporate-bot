@@ -1,7 +1,5 @@
 package com.github.msafonov.corporate.bot.entities;
 
-import org.hibernate.annotations.Type;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -21,7 +19,6 @@ public class AuthorizationCode extends BaseEntity {
     @Column(name = "user_id", length = 15)
     private String userId;
     @Column(name = "date_of_generation")
-    @Type(type = "timestamp")
     private LocalDateTime dateOfGeneration;
 
     public AuthorizationCode() {

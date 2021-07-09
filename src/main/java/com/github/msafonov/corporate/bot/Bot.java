@@ -96,6 +96,9 @@ public class Bot extends TelegramLongPollingBot {
                 //Создаем сотрудника
                 Employee employee = new Employee();
                 employee.setUserId(chat_id);
+                employee.setEmail(null);
+                employee.setPhone(null);
+                employee.setFio(null);
 
                 //Регистрируем chat_id сотрудника
                 authorization.register(employee, authorizationCode);
@@ -114,7 +117,7 @@ public class Bot extends TelegramLongPollingBot {
 
     public void addAction(Employee employee, TypeAction typeAction) {
         var equals = new HashMap<String, Object>();
-        equals.put("type_action", typeAction.name());
+        equals.put("typeAction", typeAction);
         var criteriaQuery = entityController.getWhereEqual(TypeOfAction.class, equals);
         var typeOfAction = entityController.querySingle(criteriaQuery);
         if (typeOfAction == null)

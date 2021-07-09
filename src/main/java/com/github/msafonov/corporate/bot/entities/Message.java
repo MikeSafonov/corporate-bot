@@ -1,7 +1,5 @@
 package com.github.msafonov.corporate.bot.entities;
 
-import org.hibernate.annotations.Type;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -16,10 +14,8 @@ public class Message extends BaseEntity {
     @JoinColumn(name = "employee_id")
     private Employee employee;
     @Column(name = "message_text")
-    @Type(type = "text")
     private String messageText;
     @Column(name = "date_of_message")
-    @Type(type = "timestamp")
     private LocalDateTime dateOfMessage;
     @ManyToOne()
     @JoinColumn(name = "type_id")

@@ -18,9 +18,9 @@
             <property name="hibernate.hbm2ddl.auto" value="validate"/>
             <property name="hibernate.show_sql" value="true" />
             <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost/db" />
-            <property name="javax.persistence.jdbc.user" value="user"/>
-            <property name="javax.persistence.jdbc.password" value="user"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost/bot" />
+            <property name="javax.persistence.jdbc.user" value="postgres"/>
+            <property name="javax.persistence.jdbc.password" value="spfpgsdb"/>
         </properties>
     </persistence-unit>
 </persistence>
