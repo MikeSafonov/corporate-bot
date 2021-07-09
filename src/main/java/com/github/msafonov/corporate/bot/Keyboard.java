@@ -74,4 +74,27 @@ public class Keyboard {
         replyKeyboardMarkup.setKeyboard(keyboard);
     }
 
+    public void createAdminKeyboard() {
+        clearKeyboard();
+
+        KeyboardButton statistics = new KeyboardButton("Статистика");
+        KeyboardButton mailing = new KeyboardButton("Рассылка");
+        KeyboardButton newWorker = new KeyboardButton("Новый сотрудник");
+        firstRow.add(statistics);
+        firstRow.add(mailing);
+        secondRow.add(newWorker);
+        keyboard.add(firstRow);
+        keyboard.add(secondRow);
+        replyKeyboardMarkup.setKeyboard(keyboard);
+
+    }
+
+    public void createEmptyKeyboard() {
+        clearKeyboard();
+        KeyboardButton newWorker = new KeyboardButton("пустая кнопка");
+        firstRow.add(newWorker);
+        keyboard.add(firstRow);
+        replyKeyboardMarkup.setKeyboard(keyboard);
+
+    }
 }

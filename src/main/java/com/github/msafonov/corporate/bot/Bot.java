@@ -20,10 +20,11 @@ public class Bot extends TelegramLongPollingBot {
     private final BotCommands botCommands;
     private final EntityController entityController;
 
-    public Bot(BotProperties botProperties, FileStorage fileStorage, EntityController entityController) {
+    public Bot(BotProperties botProperties, FileStorage fileStorage, EntityController entityController, Authorization authorization) {
         this.botProperties = botProperties;
         this.entityController = entityController;
-        this.botCommands = new BotCommands(fileStorage, this.keyboard, this.entityController);
+
+        this.botCommands = new BotCommands(fileStorage, this.keyboard, this.entityController, authorization);
 
     }
 

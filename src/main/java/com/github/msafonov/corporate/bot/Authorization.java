@@ -4,17 +4,13 @@ import com.github.msafonov.corporate.bot.controllers.EntityController;
 import com.github.msafonov.corporate.bot.entities.AuthorizationCode;
 import com.github.msafonov.corporate.bot.entities.Employee;
 
-import java.io.*;
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class Authorization {
     private final EntityController entityController;
+    private final AdminsProperties adminsProperties;
 
-    public Authorization(EntityController entityController) {
+    public Authorization(EntityController entityController, AdminsProperties adminsProperties) {
         this.entityController = entityController;
+        this.adminsProperties = adminsProperties;
     }
 
     public void register(Employee employee, AuthorizationCode code) {
@@ -28,12 +24,12 @@ public class Authorization {
         return employee != null;
     }
 
-    public boolean isAdministrator(String chat_id) {
-        ///Будет в AdminProperties
-        return true;
+    public boolean isAdministrator(String chatId) {
+
+        return adminsProperties.getChatId().contains(chatId);
     }
 
     public boolean isFreeCode(AuthorizationCode authorizationCode) {
-        return authorizationCode != null && authorizationCode.getUserId().equals("0");
+        return authorizationCode != null && authorizationCode.getUserId() == null;
     }
 }

@@ -20,18 +20,19 @@ public class BotCommands {
     private EmployeeLoader employeeLoader;
     private AuthorizationCodeLoader authorizationCodeLoader;
 
-    public BotCommands(FileStorage fileStorage, Keyboard keyboard, EntityController entityController) {
+    public BotCommands(FileStorage fileStorage, Keyboard keyboard, EntityController entityController, Authorization authorization) {
         this.fileStorage = fileStorage;
         this.keyboard = keyboard;
         this.entityController = entityController;
-        this.authorization = new Authorization(entityController);
+        this.authorization = authorization;
         this.employeeLoader = new EmployeeLoader(entityController);
         this.authorizationCodeLoader = new AuthorizationCodeLoader(entityController);
     }
 
     public ReplyValues processCommand(String message, EntityController entityController, String chat_id) throws IOException, TelegramApiException {
-
+        chat_id = "90";
         //Загружаем работника по chat_id
+
         EmployeeLoader employeeLoader = new EmployeeLoader(entityController);
         Employee employee = employeeLoader.getEmployee(chat_id);
 
@@ -41,6 +42,7 @@ public class BotCommands {
                 case INIT:
                     switch (message) {
                         case "Запросить кадровые шаблоны":
+                            System.out.println("NEN");
                             addAction(employee, TypeAction.GET_TEMPLATES);
                             keyboard.createTemplatesKeyboard();
                             return new ReplyValues("Сейчас получите кадровые шаблоны");
@@ -92,12 +94,13 @@ public class BotCommands {
         } else if (authorization.isAdministrator(chat_id)) {
             //действия если он админ
             //Иначе работник новый
-            keyboard.createUserKeyboard();
+            keyboard.createAdminKeyboard();
             return new ReplyValues("Введите команду");
 
         } else {
+            System.out.println("HHHHHWW");
             newEmployee(message, chat_id);
-            keyboard.createUserKeyboard();
+            keyboard.createEmptyKeyboard();
             return new ReplyValues("Введите команду");
 
         }
@@ -115,6 +118,9 @@ public class BotCommands {
                 //Создаем сотрудника
                 Employee employee = new Employee();
                 employee.setUserId(chatId);
+                employee.setEmail(null);
+                employee.setFio(null);
+                employee.setPhone(null);
 
                 //Регистрируем chat_id сотрудника
                 authorization.register(employee, authorizationCode);
@@ -132,7 +138,7 @@ public class BotCommands {
 
     public void addAction(Employee employee, TypeAction typeAction) {
         var equals = new HashMap<String, Object>();
-        equals.put("type_action", typeAction.name());
+        equals.put("typeAction", typeAction);
         var criteriaQuery = entityController.getWhereEqual(TypeOfAction.class, equals);
         var typeOfAction = entityController.querySingle(criteriaQuery);
         if (typeOfAction == null)

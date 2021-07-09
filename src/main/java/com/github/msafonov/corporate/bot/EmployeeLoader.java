@@ -23,6 +23,9 @@ public class EmployeeLoader {
     }
 
     public Action getLastAction(Employee employee) {
+        var list = employee.getActions();
+        if (list.isEmpty())
+            return null;
         return Collections.max(employee.getActions(), Comparator.comparing(Action::getDateOfAction));
     }
 }

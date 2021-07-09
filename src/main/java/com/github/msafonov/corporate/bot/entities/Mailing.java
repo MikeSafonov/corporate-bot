@@ -1,7 +1,5 @@
 package com.github.msafonov.corporate.bot.entities;
 
-import org.hibernate.annotations.Type;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
@@ -15,10 +13,8 @@ public class Mailing extends BaseEntity {
     @Column(name = "user_id", length = 15)
     private String userId;
     @Column(name = "mail_text")
-    @Type(type = "text")
     private String mailText;
     @Column(name = "date_of_mailing")
-    @Type(type = "timestamp")
     private LocalDateTime dateOfMailing;
 
     public Mailing() {
