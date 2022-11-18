@@ -32,7 +32,7 @@ dependencies {
     implementation group: 'org.flywaydb', name: 'flyway-core', version: '7.11.0'
     testImplementation(platform('org.junit:junit-bom:5.7.2'))
     testImplementation('org.junit.jupiter:junit-jupiter')
-    compile "org.slf4j:slf4j-simple:1.7.31"
+    compile "org.slf4j:slf4j-simple:2.0.4"
     implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.5.3.Final'
 }
 
